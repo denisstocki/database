@@ -1,0 +1,57 @@
+ZADANIE 1
+show tables;
+
+ZADANIE 2
+SELECT title FROM film WHERE length > 120;
+
+ZADANIE 3
+SELECT title FROM film WHERE rating = 'G' ORDER BY length LIMIT 4;
+
+ZADANIE 4
+SELECT title AS t, name AS n FROM film AS f JOIN language AS l ON f.language_id = l.language_id WHERE description LIKE '%Drama%';
+
+ZADANIE 5
+SELECT title FROM film AS f JOIN film_category AS fc JOIN category AS c ON f.film_id = fc.film_id AND fc.category_id = c.category_id WHERE name = 'Family' AND description LIKE '%Documentary';
+
+ZADANIE 6
+SELECT title FROM film AS f JOIN film_category AS fc JOIN category AS c ON f.film_id = fc.film_id AND fc.category_id = c.category_id WHERE name = 'Children' AND rating <> 'G';
+
+ZADANIE 7
+SELECT rating, COUNT(rating) AS quantity FROM film GROUP BY rating; 
+
+ZADANIE 8
+SELECT title FROM film AS f JOIN inventory AS i JOIN rental AS r ON f.film_id = i.film_id AND r.inventory_id = i.inventory_id WHERE rental_date BETWEEN '2005-05-31' AND '2005-06-15' ORDER BY title;
+
+ZADANIE 9
+SELECT DISTINCT first_name, last_name FROM actor AS a JOIN film_actor AS fa JOIN film AS f ON a.actor_id = fa.actor_id AND fa.film_id = f.film_id WHERE special_features = 'Deleted scenes';
+
+ZADANIE 10
+SELECT DISTINCT first_name, last_name FROM customer AS c JOIN payment AS p JOIN rental AS r ON c.customer_id = p.customer_id AND p.rental_id = r.rental_id WHERE p.staff_id <> r.staff_id;
+
+ZADANIE 11
+SELECT c.first_name, c.last_name FROM customer AS c JOIN (SELECT customer_id, COUNT(customer_id) AS count FROM rental GROUP BY customer_id) AS Q1 ON c.customer_id = Q1.customer_id WHERE Q1.count > (SELECT COUNT(r.customer_id) FROM rental AS r JOIN customer AS c ON r.customer_id = c.customer_id WHERE c.email = 'MARY.SMITH@sakilacustomer.org' GROUP BY r.customer_id);  
+
+ZADANIE 12
+
+ZADANIE 13
+SELECT DISTINCT a1.last_name FROM actor AS a1 WHERE a1.actor_id NOT IN (SELECT a2.actor_id FROM actor AS a2 JOIN film_actor AS fa JOIN film AS f ON a2.actor_id = fa.actor_id AND fa.film_id = f.film_id WHERE f.title NOT LIKE 'C%');
+
+ZADANIE 14
+SELECT DISTINCT a.last_name FROM actor AS a JOIN (SELECT fa1.actor_id, COUNT(fa1.actor_id) AS acount FROM film_actor AS fa1 JOIN film_category AS fc1 JOIN category AS c1 ON fa1.film_id = fc1.film_id AND fc1.category_id = c1.category_id WHERE c1.name = 'Action' GROUP BY fa1.actor_id) AS Q1 JOIN (SELECT fa2.actor_id, COUNT(fa2.actor_id) AS hcount FROM film_actor AS fa2 JOIN film_category AS fc2 JOIN category AS c2 ON fa2.film_id = fc2.film_id AND fc2.category_id = c2.category_id WHERE c2.name = 'Horror' GROUP BY fa2.actor_id) AS Q2 ON a.actor_id = Q1.actor_id AND Q1.actor_id = Q2.actor_id WHERE acount>hcount;
+
+ZADANIE 15
+SELECT c.first_name, c.last_name FROM customer AS c JOIN (SELECT customer_id, AVG(amount) AS av FROM payment GROUP BY customer_id) AS cav ON c.customer_id WHERE cav.av > (SELECT AVG(amount) FROM payment WHERE payment_date BETWEEN '2005-07-30 00:00:00' AND '2005-07-30 23:59:59'); 
+
+ZADANIE 16
+UPDATE film SET language_id = 2 WHERE title = 'YOUNG LANGUAGE';
+
+ZADANIE 17
+INSERT INTO language(language_id, name) VALUES ('7', 'Spanish');
+UPDATE film JOIN film_actor ON film.film_id = film_actor.film_id SET language_id = 7 WHERE actor_id = 3;
+
+ZADANIE 18
+ALTER TABLE language ADD films_no int default 0;
+UPDATE language lan, (SELECT language_id, COUNT(language_id) AS count FROM film GROUP BY language_id) AS val SET lan.films_no = val.count WHERE lan.language_id = val.language_id;
+
+ZADANIE 19
+ALTER TABLE film DROP release_year;
